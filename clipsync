@@ -1,0 +1,14 @@
+#! /usr/bin/env bash
+
+. ${modules}/bash/argam.sh
+clp="xclip -se c"
+
+store=$config/clip
+
+
+while clipnotify; do
+	diff $store/current <($clp -o) &>/dev/null
+	if [ $? -ne 0 ]; then
+		cp $store/current $store/hist/$(dt)
+		$clp -o > $store/current; cat $store/current; fi; done
+

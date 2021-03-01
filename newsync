@@ -1,0 +1,17 @@
+#! /usr/bin/env bash
+
+# Attempt at getting clipsync to work properly
+
+. ${modules}/bash/clip.sh
+
+function windy { inotifywait -qq -e modify -e delete_self $1 $2; }
+
+clp="xclip -se c"
+clipnotify & CN=$1
+
+while windy ${clips}/current /proc/$CN; do
+	if [ -x /proc/$CN ];
+	then unclip| $clp -i;
+	else $clp -o| clip; fi
+	clipnotify & CN=$!;
+done

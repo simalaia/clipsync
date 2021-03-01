@@ -1,0 +1,25 @@
+
+#! /usr/bin/env -S es-shell
+
+# Working clipwatch implementation, this is required to get proper integration between the X clipboard and the console
+
+fn clipwatch {
+	let (a = ; b = ) {
+  	entr -znp true << $clips/current & a = $apid
+  	clipnotify & b $apid
+  	wait
+
+  	if {~ <={access -d /proc/$b} 0} { kill $b; echo 'clip' }
+  	if {~ <={access -d /proc/$a} 0} { kill $a; echo 'xclip' }
+	}
+}
+
+clp = xclip -se c
+
+let (i = ) {
+   forever {
+    i = `clipwatch
+    if {~ $i 'clip'} { unclip| $clp -i }
+    if {~ $i 'xclip} { $clp -o| clip }
+  }
+}
